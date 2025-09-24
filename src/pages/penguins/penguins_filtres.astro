@@ -1,0 +1,96 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+
+  <h1 class="text-2xl font-bold text-center text-purple-600 m-4">
+    Penguins Filtre
+  </h1>
+
+
+  <div class="my-6 flex flex-wrap items-center justify-center gap-6 bg-purple-50 p-6 rounded-lg shadow-md">
+
+    <div class="flex flex-col items-start">
+      <label for="species" class="font-medium text-pink-700 mb-2">Choisir une espèce :</label>
+      <select
+        name="species"
+        id="species"
+        class="border border-pink-400 rounded px-3 py-2 bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-sm w-40"
+      >
+        <option value="">All species</option>
+        <option value="Adelie">Adelie</option>
+        <option value="Chinstrap">Chinstrap</option>
+        <option value="Gentoo">Gentoo</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col items-start">
+      <label for="island" class="font-medium text-pink-700 mb-2">Choisir une île :</label>
+      <select
+        name="island"
+        id="island"
+        class="border border-pink-400 rounded px-3 py-2 bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-sm w-40"
+      >
+        <option value="">All islands</option>
+        <option value="Biscoe">Biscoe</option>
+        <option value="Dream">Dream</option>
+        <option value="Torgersen">Torgersen</option>
+      </select>
+    </div>
+    
+    <div class="flex flex-col items-start">
+      <label for="sex" class="font-medium text-pink-700 mb-2">Choisir le sexe :</label>
+      <select
+        name="sex"
+        id="sex"
+        class="border border-pink-400 rounded px-3 py-2 bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-sm w-40"
+      >
+        <option value="">All sexes</option>
+        <option value="MALE">Male</option>
+        <option value="FEMALE">Female</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="myplot"></div>
+</Layout>
+
+
+<script>
+  import * as Plot from "@observablehq/plot";
+  import penguins from "../../assets/penguins.json";
+
+  const selectSpecies = document.getElementById("species");
+  const selectIsland = document.getElementById("island");
+  const selectSex = document.getElementById("sex");
+
+  function renderPlot() {
+    const species = selectSpecies.value;
+    const island = selectIsland.value;
+    const sex = selectSex.value;
+    const plotDiv = document.getElementById("myplot");
+    plotDiv.innerHTML = "";
+
+    const plot = Plot.plot({
+      marks: [
+        Plot.dot(penguins, {
+          x: "culmen_length_mm",
+          y: "culmen_depth_mm",
+          stroke: "species",
+          filter: (d) =>
+            (!species || d.species === species) &&
+            (!island || d.island === island) &&
+            (!sex || d.sex === sex),
+        }),
+      ],
+    });
+    plotDiv.appendChild(plot);
+  }
+
+  selectSpecies.addEventListener("change", renderPlot);
+  selectIsland.addEventListener("change", renderPlot);
+  selectSex.addEventListener("change", renderPlot);
+
+  renderPlot();
+</script>
