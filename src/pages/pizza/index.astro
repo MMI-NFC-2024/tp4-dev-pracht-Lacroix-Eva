@@ -1,0 +1,71 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <h1 class="text-2xl font-bold text-center text-purple-600 m-4">
+    Pizza Filtre
+  </h1>
+
+  <div class="my-6">
+    <label for="category" class="font-medium text-pink-700 mr-2"
+      >Choisir une catégorie :</label
+    >
+    <select
+      name="category"
+      id="category"
+      class="border border-pink-400 rounded px-3 py-2 bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-sm"
+    >
+      <option value="">All categories</option>
+      <option value="Classic">Classic</option>
+      <option value="Specialty">Specialty</option>
+      <option value="Vegetarian">Vegetarian</option>
+      <!-- Ajouter d'autres catégories si besoin -->
+    </select>
+  </div>
+
+  <div id="myplot"></div>
+</Layout>
+
+<script >
+  import * as Plot from "@observablehq/plot";
+  import pizza from "../../assets/pizza.json";
+
+  const selectCategory = document.getElementById("category");
+  const plotDiv = document.getElementById("myplot");
+
+  function renderPlot() {
+    const category = selectCategory.value;
+    plotDiv.innerHTML = "";
+
+    // Filtrer les données selon la catégorie
+    const filtered = category
+      ? pizza.filter((d) => d.category === category)
+      : pizza;
+
+    if (filtered.length === 0) {
+      plotDiv.textContent = "Aucune donnée pour cette catégorie.";
+      return;
+    }
+
+    // Graphique à barres : nombre de commandes par pizza
+    const plot = Plot.plot({
+      width: 700,
+      height: 420,
+      marks: [
+        Plot.barY(filtered, {
+          x: "category", // Chaque pizza sur l'axe X
+          y: "orders", // Hauteur = nombre de commandes
+          fill: "category", // Couleur selon la catégorie
+        }),
+      ],
+      y: { label: "Nombre de commandes" },
+      x: { label: "Spécialité Pizza"},
+    });
+
+    plotDiv.appendChild(plot);
+  }
+
+  selectCategory.addEventListener("change", renderPlot);
+  renderPlot();
+</script>
