@@ -32,13 +32,8 @@ import Layout from "../layouts/Layout.astro";
 
   // Fonction pour afficher le graphique
   function renderPlot() {
-    // Récupère l'espèce sélectionnée
     const species = selectSpecies.value;
-
-    // Sélectionne la div où le graphique sera affiché
     const plotDiv = document.getElementById("myplot");
-
-    // Vide le contenu précédent de la div
     plotDiv.innerHTML = "";
 
     // Crée le graphique avec Plot
